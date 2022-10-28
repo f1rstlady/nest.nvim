@@ -80,16 +80,16 @@ nest.applyKeymaps {
         }},
 
         -- Buffer `true` sets keymaps only for the current buffer
-        { '<C-', buffer = true, {
+        { '<C-', options = {buffer = true}, {
             { 'h>', '<left>' },
             { 'l>', '<right>' },
             -- You can also set bindings for a specific buffer
-            { 'o>', '<Esc>o', buffer = 2 },
+            { 'o>', '<Esc>o', options = {buffer = 2} },
         }},
     }},
 
     -- Keymaps can be defined for multiple modes at once
-    { 'H', '^', mode = 'nv' },
+    { 'H', '^', mode = {'n', v'} },
 }
 ```
 
@@ -119,7 +119,6 @@ Defaults start out as
 {
     mode = 'n',
     prefix = '',
-    buffer = false,
     options = {
         silent = true,
     },
@@ -171,17 +170,8 @@ to all containing sub-`keymapConfig`s:
 
 Sets the Vim mode(s) for keymaps contained in the `keymapConfig`.
 
-Accepts a string with each char representing a mode. The modes follow the Vim
-prefixes (`n` for normal, `i` for insert...) **except the special character `_`**, which
-stands for the empty mode (`:map `). See `:help map-table` for a reference.
-
-#### `buffer`
-
-Determines whether binding are global or local to a buffer:
-
-- `false` means global
-- `true` means current buffer
-- A number means that specific buffer (see `:ls` for buffer numbering)
+Accepts all values `vim.keymap.set`s `mode` parameter accepts. See `:help
+vim.keymap.set`.
 
 #### `options`
 

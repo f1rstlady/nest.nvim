@@ -5,7 +5,6 @@ local module = {}
 module.defaults = {
     mode = 'n',
     prefix = '',
-    buffer = false,
     options = {
         silent = true,
     },
@@ -52,18 +51,8 @@ module.applyKeymaps = function (config, presets)
         return
     end
 
-    local sanitizedMode = {}
-    for mode in string.gmatch(mergedPresets.mode, '.') do
-        local sMode = mode == '_'
-            and ''
-            or mode
-        table.insert(sanitizedMode, sMode)
-    end
-
-    mergedPresets.options.buffer = mergedPresets.buffer
-
     vim.keymap.set(
-        sanitizedMode,
+        mergedPresets.mode,
         mergedPresets.prefix,
         second,
         mergedPresets.options
