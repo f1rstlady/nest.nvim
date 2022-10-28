@@ -5,10 +5,21 @@ local util = require('nest.util')
 --- Defaults being applied to `applyKeymaps`
 -- Can be modified to change defaults applied.
 module.defaults = {
+    cond = true,
     mode = 'n',
     prefix = '',
     silent = true,
 }
+
+local function evalCondition(cond)
+    if type(cond) == 'boolean' then
+        return cond
+    elseif type(cond) == 'function' then
+        return evalCondition(cond())
+    else
+        return false
+    end
+end
 
 local function extractNvimOptions(options)
     local nvimOptions = {
@@ -65,6 +76,10 @@ module.applyKeymaps = function (config, presets)
         module.applyKeymaps(second, mergedPresets)
 
         return
+    end
+
+    if not evalCondition(mergedPresets.cond) then
+      return
     end
 
     vim.keymap.set(

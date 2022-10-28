@@ -38,6 +38,8 @@ unless overwritten.  Overrides are inherited by nested keymaps.
 ```lua
 local nest = require('nest')
 
+local lspClient = ...
+
 nest.applyKeymaps {
     -- Remove silent from ; : mapping, so that : shows up in command mode
     { ';', ':' , silent = false },
@@ -59,12 +61,18 @@ nest.applyKeymaps {
             }},
         }},
 
-        -- Lua functions can be right side values instead of key sequences
+        -- Lua functions can be right side values instead of key sequences;
+        -- whether a keymap is set may depend on a condition
         { 'l', {
-            { 'c', vim.lsp.buf.code_actions },
+            { 'c', vim.lsp.buf.code_actions,
+                cond = lspClient.server_capabilities.codeActionsProvider ~= nil
+            },
             { 'r', vim.lsp.buf.rename },
+                cond = lspClient.server_capabilities.renameProvider ~= nil
             { 's', vim.lsp.buf.signature_help },
+                cond = lspClient.server_capabilities.signatureHelpProvider ~= nil
             { 'h', vim.lsp.buf.hover },
+                cond = lspClient.server_capabilities.hoverProvider ~= nil
         }},
     }},
 
@@ -115,6 +123,7 @@ Defaults start out as
 
 ```lua
 {
+    cond = true,
     mode = 'n',
     prefix = '',
     silent = true,
@@ -168,6 +177,15 @@ Sets the Vim mode(s) for keymaps contained in the `keymapConfig`.
 
 Accepts all values `vim.keymap.set`s `mode` parameter accepts. See `:help
 vim.keymap.set`.
+
+#### `cond`
+
+Set a condition that has to be met to set keymaps. Keymaps are only set, if the
+condition evaluates to `true`.
+
+A condition may be a boolean or a function. If it is a function, the function is
+evaluated recursively (i.e. the function may return another function which is in
+turn evaluated) until it returns a boolean.
 
 #### Options from `vim.keymap.set`s `options` parameter
 
