@@ -40,7 +40,7 @@ local nest = require('nest')
 
 nest.applyKeymaps {
     -- Remove silent from ; : mapping, so that : shows up in command mode
-    { ';', ':' , options = { silent = false } },
+    { ';', ':' , silent = false },
     { ':', ';' },
 
     -- Prefix  every nested keymap with <leader>
@@ -73,18 +73,18 @@ nest.applyKeymaps {
         { 'jk', '<Esc>' },
 
         -- Set <expr> option for all nested keymaps
-        { options = { expr = true }, {
+        { expr = true, {
             { '<cr>',       'compe#confirm("<CR>")' },
             -- This is equivalent to viml `:inoremap <C-Space> <expr>compe#complete()`
             { '<C-Space>',  'compe#complete()' },
         }},
 
         -- Buffer `true` sets keymaps only for the current buffer
-        { '<C-', options = {buffer = true}, {
+        { '<C-', buffer = true, {
             { 'h>', '<left>' },
             { 'l>', '<right>' },
             -- You can also set bindings for a specific buffer
-            { 'o>', '<Esc>o', options = {buffer = 2} },
+            { 'o>', '<Esc>o', buffer = 2 },
         }},
     }},
 
@@ -108,9 +108,7 @@ You can change the defaults used by `applyKeymaps`:
 ```lua
 local nest = require('nest')
 
-nest.defaults.options = {
-    remap = true,
-}
+nest.defaults.remap = true,
 ```
 
 Defaults start out as
@@ -119,9 +117,7 @@ Defaults start out as
 {
     mode = 'n',
     prefix = '',
-    options = {
-        silent = true,
-    },
+    silent = true,
 }
 ```
 
@@ -173,16 +169,10 @@ Sets the Vim mode(s) for keymaps contained in the `keymapConfig`.
 Accepts all values `vim.keymap.set`s `mode` parameter accepts. See `:help
 vim.keymap.set`.
 
-#### `options`
+#### Options from `vim.keymap.set`s `options` parameter
 
-Sets mapping options like `<buffer>`, `<silent>` etc. for keymaps contained in
-the `keymapConfig`.
-
-**Note that `options` gets merged** into the options in its context. This means
-that you only have to pass the `options` you want to change instead of replacing
-the whole object.
-
-Accepts all values `vim.keymap.set`s `options` parameter accepts. See `:help
+All options accepted by `vim.keymap.set`s `options` parameter (e.g. `buffer` and
+`silent`) may be set and will cascade down to all children. See `:help
 vim.keymap.set`.
 
 ### `nest.defaults`

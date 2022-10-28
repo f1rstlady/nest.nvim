@@ -1,14 +1,30 @@
 local module = {}
 
+local util = require('nest.util')
+
 --- Defaults being applied to `applyKeymaps`
 -- Can be modified to change defaults applied.
 module.defaults = {
     mode = 'n',
     prefix = '',
-    options = {
-        silent = true,
-    },
+    silent = true,
 }
+
+local function extractNvimOptions(options)
+    local nvimOptions = {
+        'buffer',
+        'desc',
+        'expr',
+        'noremap',
+        'nowait',
+        'remap',
+        'replace_keycodes',
+        'script',
+        'silent',
+        'unique'
+    }
+    return util.extract(nvimOptions, options)
+end
 
 local function mergeOptions(left, right)
     if right == nil then
@@ -55,7 +71,7 @@ module.applyKeymaps = function (config, presets)
         mergedPresets.mode,
         mergedPresets.prefix,
         second,
-        mergedPresets.options
+        extractNvimOptions(mergedPresets)
     )
 end
 
