@@ -60,12 +60,20 @@ module.applyKeymaps = function (config, presets)
 
     local first = config[1]
 
+    local appliedConfig = vim.deepcopy(config)
+    if presets == nil then -- on the top level, save the current defaults
+        appliedConfig = mergeOptions(module.defaults, config)
+    end
+    appliedConfig.cond = nil
+
     if type(first) == 'table' then
-        for _, it in ipairs(config) do
-            module.applyKeymaps(it, mergedPresets)
+        for index, subConf in ipairs(config) do
+            appliedConfig[index] = module.applyKeymaps(subConf, mergedPresets)
         end
 
-        return
+        return vim.tbl_isempty(appliedConfig)
+            and nil
+            or appliedConfig
     end
 
     local second = config[2]
@@ -73,13 +81,18 @@ module.applyKeymaps = function (config, presets)
     mergedPresets.prefix = mergedPresets.prefix .. first
 
     if type(second) == 'table' then
-        module.applyKeymaps(second, mergedPresets)
+        local appSubConf = module.applyKeymaps(second, mergedPresets)
 
-        return
+        if appSubConf == nil then
+            return nil
+        else
+            appliedConfig[2] = appSubConf
+            return appliedConfig
+        end
     end
 
     if not evalCondition(mergedPresets.cond) then
-      return
+      return nil
     end
 
     vim.keymap.set(
@@ -88,6 +101,8 @@ module.applyKeymaps = function (config, presets)
         second,
         extractNvimOptions(mergedPresets)
     )
+
+    return appliedConfig
 end
 
 return module
