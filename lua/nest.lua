@@ -91,3 +91,5 @@ module.applyKeymaps = function (config, presets)
 end
 
 return module
+
+-- vi: sw=4
