@@ -139,18 +139,8 @@ in one of the following four shapes:
 { 'inputsequence', 'outputsequence' }
 ```
 
-Sets a keymap, mapping the input sequence to the output sequence similiar to
-the VimL `:*map` commands.
-
-#### Lua Function Keymap
-
-```lua
-{ 'inputsequence', someLuaFunction }
-```
-
-Sets a keymap, mapping the input sequence to call the given lua function. Also
-works when `expr` is set - just `return` a string from your function (e.g.
-`'<cmd>echo "Hello"<cr>'`).
+Sets a keymap, mapping the input sequence to the output sequence.  The output
+sequence may be any value that `vim.keymap.set` accepts.
 
 #### Config Subtree
 
