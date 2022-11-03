@@ -21,22 +21,6 @@ local function evalCondition(cond)
     end
 end
 
-local function extractNvimOptions(options)
-    local nvimOptions = {
-        'buffer',
-        'desc',
-        'expr',
-        'noremap',
-        'nowait',
-        'remap',
-        'replace_keycodes',
-        'script',
-        'silent',
-        'unique'
-    }
-    return util.extract(nvimOptions, options)
-end
-
 local function mergeOptions(left, right)
     if right == nil then
         return left or {}
@@ -95,14 +79,65 @@ module.applyKeymaps = function (config, presets)
       return nil
     end
 
+    local nvimAPIOptions = {
+        'buffer',
+        'desc',
+        'expr',
+        'noremap',
+        'nowait',
+        'remap',
+        'replace_keycodes',
+        'script',
+        'silent',
+        'unique'
+    }
+
     vim.keymap.set(
         mergedPresets.mode,
         mergedPresets.prefix,
         second,
-        extractNvimOptions(mergedPresets)
+        util.extract(nvimAPIOptions, mergedPresets)
     )
 
     return appliedConfig
+end
+
+--- Reverts the given `keymapConfig`, deleting nvim keymaps
+module.revertKeymaps = function(config, presets)
+    local mergedPresets = mergeOptions(
+        presets or { prefix = '' },
+        config
+    )
+
+    local first = config[1]
+
+    if type(first) == 'table' then
+        for _, subConf in ipairs(config) do
+            module.revertKeymaps(subConf, mergedPresets)
+        end
+
+        return
+    end
+
+    local second = config[2]
+
+    mergedPresets.prefix = mergedPresets.prefix .. first
+
+    if type(second) == 'table' then
+        module.revertKeymaps(second, mergedPresets)
+
+        return
+    end
+
+    local nvimAPIOptions = {
+        'buffer',
+    }
+
+    vim.keymap.del(
+        mergedPresets.mode,
+        mergedPresets.prefix,
+        util.extract(nvimAPIOptions, mergedPresets)
+    )
 end
 
 return module
