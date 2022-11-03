@@ -42,7 +42,7 @@ local function mergeOptions(left, right)
         return left or {}
     end
 
-    local ret = vim.tbl_deep_extend("force", left, right) or {}
+    local ret = vim.tbl_deep_extend('force', left, right) or {}
 
     if right.prefix ~= nil then
         ret.prefix = left.prefix .. right.prefix
