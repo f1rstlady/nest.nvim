@@ -45,10 +45,17 @@ module.applyKeymaps = function (config, presets)
     local first = config[1]
 
     local appliedConfig = vim.deepcopy(config)
-    if presets == nil then -- on the top level, save the current defaults
+
+    -- on the top level, save the current defaults
+    if presets == nil then
         appliedConfig = mergeOptions(module.defaults, config)
     end
+
     appliedConfig.cond = nil
+
+    if appliedConfig.buffer == true or appliedConfig.buffer == 0 then
+        appliedConfig.buffer = vim.api.nvim_get_current_buf()
+    end
 
     if type(first) == 'table' then
         for index, subConf in ipairs(config) do
