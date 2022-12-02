@@ -36,7 +36,7 @@ local function mergeOptions(left, right)
 end
 
 --- Applies the given `keymapConfig`, creating nvim keymaps
-module.applyKeymaps = function (config, presets)
+function module.applyKeymaps(config, presets)
     local mergedPresets = mergeOptions(
         presets or module.defaults,
         config
@@ -110,7 +110,7 @@ module.applyKeymaps = function (config, presets)
 end
 
 --- Reverts the given `keymapConfig`, deleting nvim keymaps
-module.revertKeymaps = function(config, presets)
+function module.revertKeymaps(config, presets)
     local mergedPresets = mergeOptions(
         presets or { prefix = '' },
         config
